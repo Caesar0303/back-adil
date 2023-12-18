@@ -56,17 +56,11 @@ class ProductController extends Controller
         $product = Product::find($id);
 
         if (!$product) {
-            return response()->json(['message' => 'Продукт не найден'], 404);
-        }
-
-        // Удаление связанных ресурсов, например, изображения продукта
-        if ($product->image && file_exists(public_path($product->image))) {
-            unlink(public_path($product->image));
+            return response()->json(['error' => 'Category not found'], 404);
         }
 
         $product->delete();
-
-        return response()->json(['message' => 'Продукт успешно удален'], 200);
+        return response()->json(['message' => 'Category deleted'], 200);
     }
 
     public function show($id) {

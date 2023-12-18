@@ -1,11 +1,11 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\OrderController;
-use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +33,14 @@ Route::prefix('api')->group(function () {
     Route::get('/product/{id}/edit', [ProductController::class, 'edit']);
     Route::post('/product/{id}/update', [ProductController::class, 'update']);
     Route::delete('/product/{id}/delete', [ProductController::class, 'delete']);
+    Route::get('/admin/users', [AdminController::class, 'users']);
+    Route::get('/admin/categories', [CategoryController::class, 'categories']);
+    Route::get('/user/{id}/edit', [AdminController::class, 'edit']);
+    Route::post('/user/{id}/update', [AdminController::class, 'update']);
+    Route::get('/category/create', [CategoryController::class, 'create']);
+    Route::post('/category/store', [CategoryController::class, 'store']);
+    Route::delete('/category/{id}/delete', [CategoryController::class, 'delete']);
+    Route::delete('/user/{id}/delete', [AdminController::class, 'delete']);
 });
 
 Route::get('/api/images/{imageName}', function ($imageName) {
@@ -46,9 +54,6 @@ Route::get('/api/images/{imageName}', function ($imageName) {
         return response('Image not found', 404);
     }
 });
-//Route::get('/product/create', function ($task) {
-//    return view('views.ProductCreate', ['task' => $task]);
-//});
 
 Route::resource('categories', CategoryController::class);
 //Route::resource('products', ProductController::class);

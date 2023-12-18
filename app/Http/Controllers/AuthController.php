@@ -23,27 +23,29 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function login()
-{
-    $credentials = request(['email', 'password']);
+    {
+        $credentials = request(['email', 'password']);
 
-    if (! $token = auth('api')->attempt($credentials)) {
-        return response()->json(['error' => 'Unauthorized'], 401);
+        if (! $token = auth('api')->attempt($credentials)) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $user = auth('api')->user();
+        $customClaims = ['role_id' => $user->role_id];
+
+        $token = auth('api')->setToken($token)->claims($customClaims)->refresh();
+
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => config('jwt.ttl') * 60,
+            'user' => [
+                'id' => $user->id,
+                'email' => $user->email,
+                'role_id' => $user->role_id,
+            ],
+        ]);
     }
-
-    $user = auth('api')->user();
-    $userRole = $user->roles->pluck('name'); 
-
-    return response()->json([
-        'access_token' => $token,
-        'token_type' => 'bearer',
-        'expires_in' => config('jwt.ttl') * 60,
-        'user' => [
-            'id' => $user->id,
-            'email' => $user->email,
-            'roles' => $userRole, 
-        ],
-    ]);
-}
 
 
     /**
@@ -92,7 +94,7 @@ class AuthController extends Controller
     return response()->json([
         'access_token' => $token,
         'token_type' => 'bearer',
-        'expires_in' => config('jwt.ttl') * 60 
+        'expires_in' => config('jwt.ttl') * 60
     ]);
 }
 
